@@ -5,19 +5,29 @@ import hello.itemservice.repository.ItemSearchCond;
 import hello.itemservice.repository.ItemUpdateDto;
 import hello.itemservice.repository.memory.MemoryItemRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// SpringBootTest -> SpringBotApplication 찾아서 거기있는 설정(어노테이션)을 테스트 설정으로 사용
+// 햔재 @Import(JdbcTemplateV3Config.class) 설정 적용되서 테스트 시에 데이터베이스 사용
 @SpringBootTest
 class ItemRepositoryTest {
 
     @Autowired
     ItemRepository itemRepository;
+
+    @Autowired
+    PlatformTransactionManager transactionManager;
+    TransactionStatus status;
 
     @AfterEach
     void afterEach() {
@@ -25,6 +35,15 @@ class ItemRepositoryTest {
         if (itemRepository instanceof MemoryItemRepository) {
             ((MemoryItemRepository) itemRepository).clearStore();
         }
+
+        // 트랜잭션 롤백
+        transactionManager.rollback(status);
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        // 트랜잭션 시작
+        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
     }
 
     @Test
