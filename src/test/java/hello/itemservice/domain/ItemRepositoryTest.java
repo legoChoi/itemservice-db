@@ -9,9 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,15 +17,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 // SpringBootTest -> SpringBotApplication 찾아서 거기있는 설정(어노테이션)을 테스트 설정으로 사용
 // 햔재 @Import(JdbcTemplateV3Config.class) 설정 적용되서 테스트 시에 데이터베이스 사용
+
+// @Transactional: 테스트에서 사용 시 테스트가 끝나면 자동으로 롤백시킴
+
+@Transactional
 @SpringBootTest
 class ItemRepositoryTest {
 
     @Autowired
     ItemRepository itemRepository;
 
-    @Autowired
-    PlatformTransactionManager transactionManager;
-    TransactionStatus status;
+//    @Autowired
+//    PlatformTransactionManager transactionManager;
+//    TransactionStatus status;
+
+    @BeforeEach
+    void beforeEach() {
+        // 트랜잭션 시작
+//        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+    }
 
     @AfterEach
     void afterEach() {
@@ -37,13 +45,7 @@ class ItemRepositoryTest {
         }
 
         // 트랜잭션 롤백
-        transactionManager.rollback(status);
-    }
-
-    @BeforeEach
-    void beforeEach() {
-        // 트랜잭션 시작
-        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+//        transactionManager.rollback(status);
     }
 
     @Test
