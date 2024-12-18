@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Repository
+//@Repository
 @Transactional // JPA의 모든 데이터 변경은 트랜잭션 안에서 이루어짐, 조회 X
 @AllArgsConstructor
 public class JpaItemRepository implements ItemRepository {
